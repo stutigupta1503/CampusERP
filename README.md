@@ -4,7 +4,7 @@ CampusERP is a web-based college management system designed to simplify and mana
 
 ## 🚀 Features
 
-- Admin Login & Authentication
+- Admin Login
 - Dashboard for centralized management
 - Course Management
 - Branch Management
