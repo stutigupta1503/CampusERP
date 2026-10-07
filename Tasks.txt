@@ -1,0 +1,17 @@
+Tasks
+1- after adding course and branch, it should redirect to course list and branch list ( like subjects and subjectMapping ).
+2- fill the data in each field
+3- create a menu named facultySubjectMapping
+ -> sessson -> faculty_id -> course -> branch -> year -> semester -> section -> subject 
+4- create modules -> 
+• Attendance
+• Marks
+• Leave
+• Document Management
+• Feedback
+• Fee
+5- create dashboards ->
+• admin
+• faculty
+• student
+• account

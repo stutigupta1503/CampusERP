@@ -1,0 +1,39 @@
+courseCode,courseFullName,courseShortName,affiliatedUniversity,totalIntake,status
+BTECH,Bachelor of Technology,BTECH,AKTU,60,Active
+CSE,Computer Science and Engineering,CSE,AKTU,60,Active
+IT,Information Technology,IT,AKTU,60,Active
+CSAI,Computer Science and Engineering (Artificial Intelligence),CSAI,AKTU,60,Active
+AIML,Artificial Intelligence and Machine Learning,AIML,AKTU,60,Active
+DS,Data Science,DS,AKTU,60,Active
+CSBS,Computer Science and Business Systems,CSBS,AKTU,60,Active
+ECE,Electronics and Communication Engineering,ECE,AKTU,60,Active
+EEE,Electrical and Electronics Engineering,EEE,AKTU,60,Active
+EE,Electrical Engineering,EE,AKTU,60,Active
+ME,Mechanical Engineering,ME,AKTU,60,Active
+CE,Civil Engineering,CE,AKTU,60,Active
+CHE,Chemical Engineering,CHE,AKTU,60,Active
+BT,Biotechnology,BT,AKTU,60,Active
+AE,Aeronautical Engineering,AE,AKTU,60,Active
+AG,Agricultural Engineering,AG,AKTU,60,Active
+FT,Food Technology,FT,AKTU,60,Active
+BPHARM,Bachelor of Pharmacy,BPHARM,AKTU,100,Active
+DPHARM,Diploma in Pharmacy,DPHARM,AKTU,60,Active
+MPHARM,Master of Pharmacy,MPHARM,AKTU,18,Active
+BARCH,Bachelor of Architecture,BARCH,AKTU,40,Active
+MARCH,Master of Architecture,MARCH,AKTU,18,Active
+BBA,Bachelor of Business Administration,BBA,AKTU,60,Active
+MBA,Master of Business Administration,MBA,AKTU,60,Active
+BCA,Bachelor of Computer Applications,BCA,AKTU,60,Active
+MCA,Master of Computer Applications,MCA,AKTU,60,Active
+BCOM,Bachelor of Commerce,BCOM,AKTU,60,Active
+MCOM,Master of Commerce,MCOM,AKTU,60,Active
+BVOC,Bachelor of Vocation,BVOC,AKTU,60,Active
+BHMCT,Bachelor of Hotel Management and Catering Technology,BHMCT,AKTU,60,Active
+BFAD,Bachelor of Fashion and Apparel Design,BFAD,AKTU,60,Active
+BFA,Bachelor of Fine Arts,BFA,AKTU,60,Active
+MTECH,Master of Technology,MTECH,AKTU,18,Active
+MPLAN,Master of Planning,MPLAN,AKTU,18,Active
+PHDENG,Doctor of Philosophy in Engineering,PHDENG,AKTU,10,Active
+PHDMGMT,Doctor of Philosophy in Management,PHDMGMT,AKTU,10,Active
+PHDPHARM,Doctor of Philosophy in Pharmacy,PHDPHARM,AKTU,10,Active
+PHDSCI,Doctor of Philosophy in Sciences,PHDSCI,AKTU,10,Active
