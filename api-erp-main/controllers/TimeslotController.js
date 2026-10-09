@@ -3,10 +3,12 @@ const Timeslot = require("../models/Timeslot");
 // CREATE TIMESLOT
 const createTimeslot = async (req, res) => {
   try {
-    const { session, lecture, facultyName, subject } = req.body;
+   
+    const { startTime, endTime, lecture, facultyName, subject } = req.body;
 
     const timeslot = new Timeslot({
-      session,
+      startTime,
+      endTime,
       lecture,
       facultyName,
       subject,
@@ -14,12 +16,15 @@ const createTimeslot = async (req, res) => {
 
     const savedTimeslot = await timeslot.save();
 
+    
     res.status(201).json({
+      success: true,
       message: "Timeslot created successfully",
-      timeslot: savedTimeslot,
+      data: savedTimeslot,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "Error creating timeslot",
       error: error.message,
     });
@@ -32,9 +37,14 @@ const getTimeslots = async (req, res) => {
   try {
     const timeslots = await Timeslot.find();
 
-    res.status(200).json(timeslots);
+    
+    res.status(200).json({
+      success: true,
+      data: timeslots
+    });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "Error fetching timeslots",
       error: error.message,
     });
@@ -49,13 +59,18 @@ const getTimeslotById = async (req, res) => {
 
     if (!timeslot) {
       return res.status(404).json({
+        success: false,
         message: "Timeslot not found",
       });
     }
 
-    res.status(200).json(timeslot);
+    res.status(200).json({
+      success: true,
+      data: timeslot
+    });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "Error fetching timeslot",
       error: error.message,
     });
@@ -66,12 +81,14 @@ const getTimeslotById = async (req, res) => {
 // UPDATE TIMESLOT
 const updateTimeslot = async (req, res) => {
   try {
-    const { session, lecture, facultyName, subject } = req.body;
+   
+    const { startTime, endTime, lecture, facultyName, subject } = req.body;
 
     const updatedTimeslot = await Timeslot.findByIdAndUpdate(
       req.params.id,
       {
-        session,
+        startTime,
+        endTime,
         lecture,
         facultyName,
         subject,
@@ -84,16 +101,19 @@ const updateTimeslot = async (req, res) => {
 
     if (!updatedTimeslot) {
       return res.status(404).json({
+        success: false,
         message: "Timeslot not found",
       });
     }
 
     res.status(200).json({
+      success: true,
       message: "Timeslot updated successfully",
-      timeslot: updatedTimeslot,
+      data: updatedTimeslot,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "Error updating timeslot",
       error: error.message,
     });
@@ -104,21 +124,22 @@ const updateTimeslot = async (req, res) => {
 // DELETE TIMESLOT
 const deleteTimeslot = async (req, res) => {
   try {
-    const deletedTimeslot = await Timeslot.findByIdAndDelete(
-      req.params.id
-    );
+    const deletedTimeslot = await Timeslot.findByIdAndDelete(req.params.id);
 
     if (!deletedTimeslot) {
       return res.status(404).json({
+        success: false,
         message: "Timeslot not found",
       });
     }
 
     res.status(200).json({
+      success: true,
       message: "Timeslot deleted successfully",
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "Error deleting timeslot",
       error: error.message,
     });

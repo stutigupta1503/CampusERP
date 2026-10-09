@@ -93,7 +93,7 @@ let [isloggedin,setIsloggedin]=useState(false)
 
             <ListGroup.Item
               as={NavLink}
-              to="/timeslot"
+              to="/timeslots"
               className="d-flex align-items-center gap-2"
             >
               <i className='bi bi-clock'></i>

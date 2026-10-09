@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; 
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function AddTimeslot() {
+  let navigate = useNavigate(); 
 
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -31,12 +33,9 @@ function AddTimeslot() {
         if (result.data.success) {
           alert("Timeslot added successfully");
 
-          // Clear form
-          setStartTime("");
-          setEndTime("");
-          setLecture("");
-          setFacultyName("");
-          setSubject("");
+          // FIX 3: Redirect the user back to the list page route
+          navigate("/timeslots"); 
+          
         } else {
           alert(result.data.message || "Failed to add timeslot");
         }
@@ -62,7 +61,6 @@ function AddTimeslot() {
         {/* Start Time */}
         <div className="mb-3">
           <label className="form-label">Start Time</label>
-
           <input
             type="time"
             className="form-control"
@@ -75,7 +73,6 @@ function AddTimeslot() {
         {/* End Time */}
         <div className="mb-3">
           <label className="form-label">End Time</label>
-
           <input
             type="time"
             className="form-control"
@@ -88,7 +85,6 @@ function AddTimeslot() {
         {/* Lecture */}
         <div className="mb-3">
           <label className="form-label">Lecture</label>
-
           <input
             type="text"
             className="form-control"
@@ -102,7 +98,6 @@ function AddTimeslot() {
         {/* Faculty Name */}
         <div className="mb-3">
           <label className="form-label">Faculty Name</label>
-
           <input
             type="text"
             className="form-control"
@@ -116,7 +111,6 @@ function AddTimeslot() {
         {/* Subject */}
         <div className="mb-3">
           <label className="form-label">Subject</label>
-
           <input
             type="text"
             className="form-control"
@@ -127,9 +121,20 @@ function AddTimeslot() {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary">
-          Add Timeslot
-        </button>
+        {/* Optional Action Button Layout */}
+        <div className="d-flex gap-2">
+          <button type="submit" className="btn btn-primary">
+            Add Timeslot
+          </button>
+          
+          <button 
+            type="button" 
+            className="btn btn-secondary" 
+            onClick={() => navigate("/timeslots")}
+          >
+            Cancel
+          </button>
+        </div>
 
       </form>
 

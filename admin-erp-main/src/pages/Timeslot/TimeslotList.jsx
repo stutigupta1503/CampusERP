@@ -1,163 +1,132 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import axios from "axios";
-import { Form, InputGroup } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import axios from 'axios';
+import { Modal, Button, Form, InputGroup, Container } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 function TimeslotList() {
+    let navigate = useNavigate();
+    let [timeslots, setTimeslots] = useState([]);
+    const [show, setShow] = useState(false);
+    let [isDelete, setIsDelete] = useState(false);
+    
+    // Search filter state variables
+    let [searchBySubject, setSearchBySubject] = useState('');
+    let [searchByFaculty, setSearchByFaculty] = useState('');
+    let [searchByLecture, setSearchByLecture] = useState('');
 
-  const navigate = useNavigate();
+    useEffect(() => {
+        axios({
+            url: 'http://localhost:3000/timeslots',
+            method: 'get',
+            params: {
+                subject: searchBySubject,
+                facultyName: searchByFaculty,
+                lecture: searchByLecture
+            }
+        }).then((result) => {
+            if (result.data.success) {
+                console.log(result.data.data);
+                setTimeslots(result.data.data);
+            }
+        }).catch((error) => {
+            console.log(error);
+        });
+    }, [isDelete, searchBySubject, searchByFaculty, searchByLecture]);
 
-  const [timeslots, setTimeslots] = useState([]);
-  const [searchByLecture, setSearchByLecture] = useState("");
+    const handleClose = () => {
+        setShow(false);
+        setIsDelete(prev => !prev); // Triggers useEffect to re-fetch remaining records
+    };
 
-  useEffect(() => {
+    function goToAddTimeslotPage() {
+        navigate('/add/timeslot');
+    }
 
-    axios
-      .get("http://localhost:3000/timeslots")
-      .then((result) => {
-
-        console.log("Timeslots:", result.data);
-
-        if (result.data.success) {
-          setTimeslots(result.data.data);
+    function goToDelete(id) {
+        if (window.confirm("Are you sure you want to delete this timeslot?")) {
+            axios({
+                url: 'http://localhost:3000/delete/timeslot/' + id,
+                method: 'delete'
+            }).then((result) => {
+                if (result.data.success) {
+                    setShow(true);
+                }
+            }).catch((err) => {
+                console.log(err.message);
+            });
         }
+    }
 
-      })
-      .catch((error) => {
-        console.log("Error fetching timeslots:", error);
-      });
+    function goToEdit(id) {
+        navigate('/edit/timeslot/' + id);
+    }
 
-  }, []);
+    return (
+        <Container className="mt-4">
+            <h3 className="text-center mb-4 py-2 text-primary fw-bold">LIST OF TIMESLOTS</h3>
 
+            <InputGroup className="mb-3">
+                <InputGroup.Text>
+                    <i className="bi bi-search"></i>
+                </InputGroup.Text>
+                <Form.Control 
+                    type="text" 
+                    placeholder=" Type Subject to search..." 
+                    onChange={(e) => setSearchBySubject(e.target.value)} 
+                />
+            </InputGroup>
 
-  function goToAddTimeslotPage() {
-    navigate("/add/timeslot");
-  }
+            <button className="btn btn-success ms-3 mt-2 float-end" onClick={goToAddTimeslotPage}>
+                Add Timeslot +
+            </button>
 
+            <table className="table text-center table-hover mt-5">
+                <thead>
+                    <tr>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Lecture</th>
+                        <th>Faculty Name</th>
+                        <th>Subject</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        timeslots.map((slot) => (
+                            <tr key={slot._id}>
+                                <td>{slot.startTime}</td>
+                                <td>{slot.endTime}</td>
+                                <td>{slot.lecture}</td>
+                                <td>{slot.facultyName}</td>
+                                <td>{slot.subject}</td>
+                                <td>
+                                    {/* Action items: Eye icon completely removed */}
+                                    <i className="bi bi-pencil text-warning me-3" style={{ cursor: 'pointer' }} onClick={() => goToEdit(slot._id)}></i>
+                                    <i className="bi bi-trash text-danger" style={{ cursor: 'pointer' }} onClick={() => goToDelete(slot._id)}></i>
+                                </td>
+                            </tr>
+                        ))
+                    }
+                </tbody>
+            </table>
 
-  function goToEdit(id) {
-    navigate("/timeslot/edit/" + id);
-  }
-
-
-  const filteredTimeslots = timeslots.filter((timeslot) =>
-    timeslot.lecture
-      ?.toLowerCase()
-      .includes(searchByLecture.toLowerCase())
-  );
-
-
-  return (
-    <>
-
-      <h3 className="text-center mb-4 py-2 text-primary fw-bold">
-        List Of Timeslot
-      </h3>
-
-
-      {/* Search */}
-      <InputGroup className="mb-3">
-
-        <InputGroup.Text>
-          <i className="bi bi-search"></i>
-        </InputGroup.Text>
-
-        <Form.Control
-          type="text"
-          placeholder="Type Lecture to search"
-          value={searchByLecture}
-          onChange={(e) => setSearchByLecture(e.target.value)}
-        />
-
-      </InputGroup>
-
-
-      {/* Add Button */}
-      <div className="d-flex justify-content-end me-3 mt-2">
-
-        <button
-          className="btn btn-sm btn-success"
-          onClick={goToAddTimeslotPage}
-        >
-          Add Timeslot +
-        </button>
-
-      </div>
-
-
-      {/* Table */}
-      <table className="table text-center table-hover mt-5">
-
-        <thead>
-
-          <tr>
-            <th>Session</th>
-            <th>Lecture</th>
-            <th>Faculty</th>
-            <th>Subject</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-
-        <tbody>
-
-          {filteredTimeslots.length > 0 ? (
-
-            filteredTimeslots.map((timeslot) => (
-
-              <tr key={timeslot._id}>
-
-                <td>
-                  {timeslot.startTime} - {timeslot.endTime}
-                </td>
-
-                <td>
-                  {timeslot.lecture}
-                </td>
-
-                <td>
-                  {timeslot.facultyName}
-                </td>
-
-                <td>
-                  {timeslot.subject}
-                </td>
-
-                <td>
-
-                  <i
-                    className="bi bi-pencil me-3"
-                    onClick={() => goToEdit(timeslot._id)}
-                    style={{ cursor: "pointer" }}
-                  ></i>
-
-                </td>
-
-              </tr>
-
-            ))
-
-          ) : (
-
-            <tr>
-              <td colSpan="5">
-                No timeslots found
-              </td>
-            </tr>
-
-          )}
-
-        </tbody>
-
-      </table>
-
-    </>
-
-  );
+            {/* --------- Action Result Modal Code ------------- */}
+            <Modal show={show} onHide={handleClose} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Success</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Timeslot has been Deleted successfully👍</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="danger" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </Container>
+    );
 }
 
 export default TimeslotList;

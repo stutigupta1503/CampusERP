@@ -168,7 +168,7 @@ function App() {
 
             {/* Timeslot */}
             <Route
-              path="/timeslot"
+              path="/timeslots"
               element={<TimeslotList />}
             />
 
@@ -177,7 +177,10 @@ function App() {
               element={<AddTimeslot />}
             />
 
-            <Route path="/timeslot/edit/:id" element={<TimeslotEdit />}></Route>
+            <Route 
+              path="/edit/timeslot/:id" 
+              element={<TimeslotEdit />}>
+            </Route>
             
           </Routes>
 
