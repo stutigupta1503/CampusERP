@@ -96,8 +96,14 @@ function BranchList() {
 
 
     function goToEdit(id) {
-        // navigate('/edit/branch/' + id);
+    if (!id) {
+        console.error("Error: Cannot navigate to edit page because the branch ID is undefined!");
+        alert("Unable to edit: Branch unique ID is missing.");
+        return;
     }
+    
+    navigate(`/edit/branch/${id}`);
+}
 
     return (
         <>

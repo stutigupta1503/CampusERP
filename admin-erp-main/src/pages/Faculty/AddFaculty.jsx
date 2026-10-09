@@ -36,9 +36,10 @@ function AddFaculty() {
   let [teachingExperience, setTeachingExperience] = useState(0);
   let [industryExperience, setIndustryExperience] = useState(0);
   let [researchExperience, setResearchExperience] = useState(0);
-  let [file, setFile] = useState("");
+  let [file, setFile] = useState(null);
 
-  let doAddFaculty = () => {
+  let doAddFaculty = (e) => {
+    if(e) e.preventDefault();
     setButtonDisabled(true);
     SetShowForm(false);
     setShowSpinner(true);
@@ -62,8 +63,11 @@ function AddFaculty() {
     formData.append("teachingExperience", teachingExperience);
     formData.append("industryExperience", industryExperience);
     formData.append("researchExperience", researchExperience);
-    formData.append("file", file);
-    formData.append("fileName", file.name);
+    if (file) {
+      formData.append("file", file);
+      formData.append("fileName", file.name);
+    }
+
     axios({
       url: "http://localhost:3000/add/faculty",
       method: "post",

@@ -52,12 +52,11 @@ async function addFaculties(req, res) {
     console.log(req.file);
     console.log(req.file.path);
 
-    // ✅ Parse CSV into JSON array
+    
     const jsonArray = await csv().fromFile(req.file.path);
 
-    // ✅ Process and clean up data
     const FacultyList = jsonArray.map((item) => {
-      // Fix DOB format (DD-MM-YYYY → Date)
+     
       let formattedDob = null;
       if (item.dob) {
         const [day, month, year] = item.dob.split('-');
@@ -89,7 +88,7 @@ async function addFaculties(req, res) {
       };
     });
 
-    // ✅ Insert into MongoDB
+    
     await Faculty.insertMany(FacultyList);
     const userList = jsonArray.map((item) => {
       let encryptedPassword = bcrypt.hashSync('123456', 10);
@@ -104,9 +103,7 @@ async function addFaculties(req, res) {
       }
     })
     await User.insertMany(userList)
-    // Optional: remove uploaded file after processing
-    // fs.unlinkSync(req.file.path);
-
+    
     res.status(200).send({ success: true, message: 'Data added successfully' });
 
   } catch (error) {
