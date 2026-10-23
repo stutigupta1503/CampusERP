@@ -102,11 +102,96 @@ async function getSubjectsMapped(req, res) {
     }
 }
 
+async function getSubjectMappingById(req, res) {
+    try {
+        const mapping = await Mapping.findById(req.params.id)
+
+        if (!mapping) {
+            return res.status(404).send({
+                success: false,
+                message: 'Subject Mapping not found'
+            })
+        }
+
+        res.status(200).send({
+            success: true,
+            data: mapping
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: 'Something went wrong'
+        })
+    }
+}
+async function editSubjectMapping(req, res) {
+    try {
+        const updatedMapping = await Mapping.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+
+        if (!updatedMapping) {
+            return res.status(404).send({
+                success: false,
+                message: 'Subject Mapping not found'
+            })
+        }
+
+        res.status(200).send({
+            success: true,
+            message: 'Subject Mapping updated successfully',
+            data: updatedMapping
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: 'Something went wrong'
+        })
+    }
+}
+
+
+async function deleteSubjectMapping(req, res) {
+    try {
+        const deletedMapping = await Mapping.findByIdAndDelete(
+            req.params.id
+        )
+
+        if (!deletedMapping) {
+            return res.status(404).send({
+                success: false,
+                message: 'Subject Mapping not found'
+            })
+        }
+
+        res.status(200).send({
+            success: true,
+            message: 'Subject Mapping deleted successfully'
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success: false,
+            message: 'Something went wrong'
+        })
+    }
+}
+
 
 module.exports={
     getSubjectsForMapping,
     getCoursesForMapping,
     getBranchsForMapping,
     addSubjectMapping,
-    getSubjectsMapped
+    getSubjectsMapped,
+    getSubjectMappingById,
+    editSubjectMapping,
+    deleteSubjectMapping
 }

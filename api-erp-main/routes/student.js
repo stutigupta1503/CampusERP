@@ -1,41 +1,85 @@
+
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const bodyParser = require('body-parser');
+
 const StudentController = require('../controllers/StudentController');
 
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: false }));
+// Memory storage supports both:
+// 1. Cloudinary image uploads using req.file.buffer
+// 2. Excel uploads using req.file.buffer
+const storage = multer.memoryStorage();
 
-// ✅ Use memory storage so req.file.buffer works directly with xlsx
 const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+    storage,
+    limits: {
+        fileSize: 10 * 1024 * 1024, // 10 MB
+    },
 });
 
-// ✅ Get dropdown data
-router.get('/courses/for/student', (req, res) => {
-  StudentController.getCourseForStudent(req, res);
-});
+// Get courses for student dropdown
+router.get(
+    '/courses/for/student',
+    StudentController.getCourseForStudent
+);
 
-router.get('/branches/for/student', (req, res) => {
-  StudentController.getBranchForStudent(req, res);
-});
+// Get branches for student dropdown
+router.get(
+    '/branches/for/student',
+    StudentController.getBranchForStudent
+);
 
-// ✅ Add single student with image
-router.post('/add/student', upload.single('file'), (req, res) => {
-  StudentController.addStudent(req, res);
-});
+// Add student with optional image
+// Frontend FormData field name: file
+router.post(
+    '/add/student',
+    upload.single('file'),
+    StudentController.addStudent
+);
 
-// ✅ Bulk student upload (Excel/CSV)
-router.post('/students/upload', upload.single('bulkFile'), (req, res) => {
-  StudentController.bulkUploadStudents(req, res);
-});
+// Bulk upload students from Excel
+// Frontend FormData field name: bulkFile
+router.post(
+    '/students/upload',
+    upload.single('bulkFile'),
+    StudentController.bulkUploadStudents
+);
 
-// ✅ CRUD routes
-router.get('/students', (req, res) => StudentController.getStudents(req, res));
-router.delete('/delete/student/:id', (req, res) => StudentController.deleteStudent(req, res));
-router.get('/student/:id', (req, res) => StudentController.getStudent(req, res));
-router.put('/edit/student/:id', (req, res) => StudentController.editStudent(req, res));
+// Get all students
+router.get(
+    '/students',
+    StudentController.getStudents
+);
+
+// Delete student
+router.delete(
+    '/delete/student/:id',
+    StudentController.deleteStudent
+);
+
+// Get one student by ID
+router.get(
+    '/student/:id',
+    StudentController.getStudent
+);
+
+// Edit student, optionally including a new image
+router.put(
+    '/edit/student/:id',
+    upload.single('file'),
+    StudentController.editStudent
+);
+
+// Handle Multer upload errors
+router.use((error, req, res, next) => {
+    if (error instanceof multer.MulterError) {
+        return res.status(400).send({
+            success: false,
+            message: error.message,
+        });
+    }
+
+    next(error);
+});
 
 module.exports = router;

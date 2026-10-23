@@ -23,6 +23,7 @@ import SubjectEdit from './pages/Subject/SubjectEdit'
 // Subject Mapping
 import AddSubjectMapping from './pages/SubjectMapping/AddSubjectMapping'
 import SubjectMappingList from './pages/SubjectMapping/SubjectMappingList'
+import EditSubjectMapping from './pages/SubjectMapping/EditSubjectMapping'
 
 // Faculty
 import AddFaculty from './pages/Faculty/AddFaculty'
@@ -125,7 +126,10 @@ function App() {
               path="/add/subjectmapping"
               element={<AddSubjectMapping />}
             />
-
+            <Route
+              path="/edit/subjectMapping/:id"
+              element={<EditSubjectMapping />}
+            />
 
             {/* Faculty */}
             <Route

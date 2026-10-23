@@ -1,69 +1,110 @@
+
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import axios from 'axios'
-import { Modal, Button, Form, InputGroup, Container } from 'react-bootstrap'
+import { Modal, Button, Form, InputGroup } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
-
 function SubjectMappingList() {
 
-
-    let navigate = useNavigate();
-    let [subjectsmap, setSubjectsmap] = useState([])
+    const navigate = useNavigate()
+    const [subjectsmap, setSubjectsmap] = useState([])
     const [show, setShow] = useState(false)
-    let [isDelete, setIsDelete] = useState(false)
-    let [searchByCourse, setSearchByCourse] = useState('')
-
-
+    const [searchByCourse, setSearchByCourse] = useState('')
+    const [message, setMessage] = useState('')
 
     useEffect(() => {
+        fetchSubjectsMapped()
+    }, [searchByCourse])
 
-        axios({
-            url: 'http://localhost:3000/subjectsMapped',
-            method: 'get',
-            params: {
-                course: searchByCourse
-            }
-        }).then((result) => {
+    async function fetchSubjectsMapped() {
+        try {
+            const result = await axios.get(
+                'http://localhost:3000/subjectsMapped',
+                {
+                    params: {
+                        course: searchByCourse
+                    }
+                }
+            )
+
             if (result.data.success) {
-                console.log(result.data.data);
-                setSubjectsmap(result.data.data);
-
+                setSubjectsmap(result.data.data)
             }
-        }).catch((error) => {
-            console.log(error);
-
-        })
-    }, [isDelete, searchByCourse])
-
-
-    const handleClose = () => {
-        setShow(false)
-        setIsDelete(true)
+        } catch (error) {
+            console.log(error)
+        }
     }
 
-    function goToEdit() {
-        navigate('/edit/subject')
+    function goToEdit(id) {
+        navigate(`/edit/subjectMapping/${id}`)
     }
+
     function goToAddMappingPage() {
         navigate('/add/subjectMapping')
     }
 
+    async function handleDelete(id) {
+        const confirmDelete = window.confirm(
+            'Are you sure you want to delete this Subject Mapping?'
+        )
+
+        if (!confirmDelete) {
+            return
+        }
+
+        try {
+            const result = await axios.delete(
+                `http://localhost:3000/delete/subjectMapping/${id}`
+            )
+
+            if (result.data.success) {
+                setSubjectsmap(prev =>
+                    prev.filter(subject => subject._id !== id)
+                )
+
+                setMessage('Subject Mapping deleted successfully!')
+                setShow(true)
+            }
+        } catch (error) {
+            console.log(error)
+            alert(
+                error.response?.data?.message ||
+                'Failed to delete Subject Mapping'
+            )
+        }
+    }
+
+    const handleClose = () => {
+        setShow(false)
+    }
 
     return (
         <>
-            <h3 className="text-center mb-4 py-2 text-primary fw-bold">LIST OF SUBJECTS MAPPING</h3>
+            <h3 className="text-center mb-4 py-2 text-primary fw-bold">
+                LIST OF SUBJECTS MAPPING
+            </h3>
 
             <InputGroup className="mb-3">
                 <InputGroup.Text>
                     <i className="bi bi-search"></i>
                 </InputGroup.Text>
-                <Form.Control type="text" placeholder=" Type Subject Name to search" onChange={(e) => setSearchByCourse(e.target.value)} />
+
+                <Form.Control
+                    type="text"
+                    placeholder="Type Course Name to search"
+                    value={searchByCourse}
+                    onChange={(e) => setSearchByCourse(e.target.value)}
+                />
             </InputGroup>
 
-            <button className="btn btn-success ms-3 mt-2 float-end" onClick={goToAddMappingPage}>Map Subject +</button>
-
+            <button
+                className="btn btn-success ms-3 mt-2 float-end"
+                onClick={goToAddMappingPage}
+            >
+                Map Subject +
+            </button>
 
             <table className="table text-center table-hover mt-5">
                 <thead>
@@ -77,44 +118,60 @@ function SubjectMappingList() {
                         <th>Action</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    {
-                        subjectsmap.map((subject) =>
-                            <tr>
-                                <td>{subject.session}</td>
-                                <td>{subject.subject}</td>
-                                <td>{subject.course}</td>
-                                <td>{subject.branch}</td>
-                                <td>{subject.year}</td>
-                                <td>{subject.semester}</td>
+                    {subjectsmap.map((subject) => (
+                        <tr key={subject._id}>
+                            <td>{subject.session}</td>
+                            <td>{subject.subject}</td>
+                            <td>{subject.course}</td>
+                            <td>{subject.branch}</td>
+                            <td>{subject.year}</td>
+                            <td>{subject.semester}</td>
 
-                                <td>
-                                    <i className="bi bi-pencil me-3 " onClick={() => goToEdit(subject._id)} ></i>
+                            <td>
+                                
+                                <i
+                                    className="bi bi-pencil text-primary me-3"
+                                    role="button"
+                                    title="Edit"
+                                    onClick={() => goToEdit(subject._id)}
+                                ></i>
 
-                                </td>
-                            </tr>
-                        )
-                    }
+                                <i
+                                    className="bi bi-trash text-danger"
+                                    role="button"
+                                    title="Delete"
+                                    onClick={() => handleDelete(subject._id)}
+                                ></i>
+                            </td>
+                        </tr>
+                    ))}
+
+                    {subjectsmap.length === 0 && (
+                        <tr>
+                            <td colSpan="7">No Subject Mappings Found</td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
 
-
-            {/* ---------Modal code ------------- */}
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Success</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>subject Mapping has been Deleted successfully👍</Modal.Body>
+
+                <Modal.Body>{message}</Modal.Body>
+
                 <Modal.Footer>
-                    <Button variant="danger" onClick={handleClose}>
+                    <Button variant="primary" onClick={handleClose}>
                         Close
                     </Button>
                 </Modal.Footer>
             </Modal>
         </>
     )
-
-
 }
 
 export default SubjectMappingList
+

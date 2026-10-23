@@ -13,6 +13,7 @@ function AddCourse() {
 
     const handleClose = () => {
         setShow(false);
+        navigate('/courses');
     }
 
     let [buttonDisabled, setButtonDisabled] = useState(false);

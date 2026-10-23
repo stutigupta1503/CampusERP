@@ -40,15 +40,24 @@ function TimeslotEdit() {
     axios({
       url: "http://localhost:3000/edit/timeslot/" + params.id,
       method: "put",
-      data: {
-        session: {
-          startTime: timeslot.startTime,
-          endTime: timeslot.endTime,
-        },
-        lecture: timeslot.lecture,
-        facultyName: timeslot.facultyName, 
-        subject: timeslot.subject,
-      },
+      
+data: {
+  startTime: timeslot.startTime,
+  endTime: timeslot.endTime,
+  lecture: timeslot.lecture,
+  facultyName: timeslot.facultyName,
+  subject: timeslot.subject,
+},
+
+      // data: {
+      //   session: {
+      //     startTime: timeslot.startTime,
+      //     endTime: timeslot.endTime,
+      //   },
+      //   lecture: timeslot.lecture,
+      //   facultyName: timeslot.facultyName, 
+      //   subject: timeslot.subject,
+      // },
     })
       .then((result) => {
         
@@ -62,30 +71,58 @@ function TimeslotEdit() {
       });
   }
 
-  useEffect(() => {
-    axios({
-      url: "http://localhost:3000/timeslot/" + params.id,
-      method: "get",
-    })
-      .then((result) => {
-        
-        let data = result.data; 
+  
+useEffect(() => {
+  axios({
+    url: "http://localhost:3000/timeslot/" + params.id,
+    method: "get",
+  })
+    .then((result) => {
+      const data = result.data.data;
 
-        if (data) {
-          setTimeslot({
-            startTime: data.session?.startTime || "",
-            endTime: data.session?.endTime || "",
-            lecture: data.lecture || "",
-            facultyName: data.facultyName || "", 
-            subject: data.subject || "",
-          });
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Error fetching data: " + err.message);
-      });
-  }, [params.id]);
+      if (data) {
+        setTimeslot({
+          startTime: data.startTime || "",
+          endTime: data.endTime || "",
+          lecture: data.lecture || "",
+          facultyName: data.facultyName || "",
+          subject: data.subject || "",
+        });
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      alert(
+        "Error fetching data: " +
+          (err.response?.data?.message || err.message)
+      );
+    });
+}, [params.id]);
+
+  // useEffect(() => {
+  //   axios({
+  //     url: "http://localhost:3000/timeslot/" + params.id,
+  //     method: "get",
+  //   })
+  //     .then((result) => {
+        
+  //       let data = result.data; 
+
+  //       if (data) {
+  //         setTimeslot({
+  //           startTime: data.session?.startTime || "",
+  //           endTime: data.session?.endTime || "",
+  //           lecture: data.lecture || "",
+  //           facultyName: data.facultyName || "", 
+  //           subject: data.subject || "",
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //       alert("Error fetching data: " + err.message);
+  //     });
+  // }, [params.id]);
 
   return (
     <Container>

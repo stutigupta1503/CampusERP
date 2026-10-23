@@ -13,8 +13,9 @@ function AddStudent() {
     const [showBulkModal, setShowBulkModal] = useState(false);
 
     const handleClose = () => {
-        setShow(false);
-    }
+    setShow(false);
+    navigate('/students');
+    };
 
     const handleCloseBulkModal = () => {
         setShowBulkModal(false);

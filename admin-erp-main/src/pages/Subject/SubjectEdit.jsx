@@ -142,7 +142,7 @@ function SubjectEdit() {
                         </Col>
                         <Col md={6}>
                             <Form.Group className="mb-3">
-                                <Form.Label>Cradit Score</Form.Label>
+                                <Form.Label>Credit Score</Form.Label>
                                 <Form.Select
                                     value={subject.creditScore}
                                     onChange={handleChange}

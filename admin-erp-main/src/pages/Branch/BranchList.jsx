@@ -18,7 +18,7 @@ function BranchList() {
     let [nop, setNop] = useState(1);
     let [pageNo, setPageNo] = useState(1);
     let [totalBranches, setTotalBranches] = useState(0);
-    let branchPerPage = 3;
+    let branchPerPage = 10;
     let items = [];
     for (let i = 1; i <= nop; i++) {
         items.push(
@@ -35,7 +35,7 @@ function BranchList() {
             params: {
                 branchFullName: searchByBranchName,
                 pageNo: pageNo,
-                limit: 3
+                limit: 10
             }
         }).then((result) => {
             if (result.data.success) {

@@ -1,190 +1,355 @@
+
 const Branch = require('../models/Branch');
 const Course = require('../models/Course');
-const Student = require('../models/Student')
-const User = require('../models/User')
-const cloudinary = require('cloudinary').v2
+const Student = require('../models/Student');
+const User = require('../models/User');
 
-const bcrypt = require('bcrypt')
-
+const cloudinary = require('cloudinary').v2;
+const bcrypt = require('bcrypt');
 const xlsx = require('xlsx');
 
+// Cloudinary configuration
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
+const DEFAULT_USER_IMAGE =
+    'https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png';
 
+// Upload a file from Multer memory storage to Cloudinary.
+// Memory storage provides req.file.buffer, not req.file.path.
+function uploadToCloudinary(file, folder = 'students') {
+    return new Promise((resolve, reject) => {
+        if (!file || !file.buffer) {
+            return reject(new Error('Uploaded file buffer is missing'));
+        }
+
+        const stream = cloudinary.uploader.upload_stream(
+            {
+                folder,
+                resource_type: 'image',
+            },
+            (error, result) => {
+                if (error) {
+                    return reject(error);
+                }
+
+                if (!result || !result.secure_url) {
+                    return reject(new Error('Cloudinary did not return an image URL'));
+                }
+
+                resolve(result);
+            }
+        );
+
+        stream.end(file.buffer);
+    });
+}
+
+// Get courses for student dropdown
 async function getCourseForStudent(req, res) {
     try {
-        let courses = await Course.find(
-            { courseFullName: { $regex: new RegExp(req.query.courseFullName, "i") } },
+        const searchTerm = req.query.courseFullName || '';
+
+        const courses = await Course.find(
+            {
+                courseFullName: {
+                    $regex: searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+                    $options: 'i',
+                },
+            },
             {
                 _id: 1,
                 courseFullName: 1,
             }
         );
-        let sendCourses = []
-        for (let i = 0; i < courses.length; i++) {
-            sendCourses.push({
-                value: courses[i]._id,
-                label: courses[i].courseFullName,
-            })
-        }
-        res.status(200).send({ success: true, data: sendCourses })
-    } catch (error) {
-        res.status(500).send({ success: false, message: 'something went wrong' })
-        console.log(error);
 
+        res.status(200).send({
+            success: true,
+            data: courses.map(course => ({
+                value: course._id,
+                label: course.courseFullName,
+            })),
+        });
+    } catch (error) {
+        console.error('Get courses error:', error);
+        res.status(500).send({
+            success: false,
+            message: 'Failed to load courses',
+        });
     }
 }
 
+// Get branches for student dropdown
 async function getBranchForStudent(req, res) {
     try {
-        let branches = await Branch.find(
-            { branchFullName: { $regex: new RegExp(req.query.branchFullName, "i") } },
+        const searchTerm = req.query.branchFullName || '';
+
+        const branches = await Branch.find(
+            {
+                branchFullName: {
+                    $regex: searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+                    $options: 'i',
+                },
+            },
             {
                 _id: 1,
                 branchFullName: 1,
             }
         );
-        let sendBranches = []
-        for (let i = 0; i < branches.length; i++) {
-            sendBranches.push({
-                value: branches[i]._id,
-                label: branches[i].branchFullName,
-            })
-        }
-        res.status(200).send({ success: true, data: sendBranches })
-    } catch (error) {
-        res.status(500).send({ success: false, message: 'something went wrong' })
-        console.log(error);
 
+        res.status(200).send({
+            success: true,
+            data: branches.map(branch => ({
+                value: branch._id,
+                label: branch.branchFullName,
+            })),
+        });
+    } catch (error) {
+        console.error('Get branches error:', error);
+        res.status(500).send({
+            success: false,
+            message: 'Failed to load branches',
+        });
     }
 }
 
-
+// Add student
 async function addStudent(req, res) {
-    try {
-        let upload;
+    let savedStudent;
 
+    try {
+        const student = new Student(req.body);
+
+        // Upload the image only when a file is provided.
         if (req.file) {
-            cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-            upload = await cloudinary.uploader.upload(req.file.path);
-        }
-        let student = new Student(req.body);
-        if (req.file && upload) {
+            const upload = await uploadToCloudinary(req.file);
             student.image = upload.secure_url;
         }
+
         await student.save();
-        let encryptedPassword = bcrypt.hashSync('123456', 10);
-        let user = new User(
-            {
-                firstName: student.firstName,
-                lastName: student.lastName,
-                email: student.collegeEmailId,
-                password: encryptedPassword,
-                mobNo: student.mobileNo,
-                userRole: 'student',
-                userImage: student.facultyImage || 'https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png',
-            }
-        )
-        await user.save()
+        savedStudent = student;
 
-        res.status(200).send({ success: true, message: 'Student Add Successfully' })
+        // Create the corresponding student user account.
+        const encryptedPassword = await bcrypt.hash('123456', 10);
 
+        const user = new User({
+            firstName: student.firstName,
+            lastName: student.lastName,
+            email: student.collegeEmailId,
+            password: encryptedPassword,
+            mobNo: student.mobileNumber || student.mobileNo || '',
+            userRole: 'student',
+            userImage: student.image || DEFAULT_USER_IMAGE,
+        });
+
+        await user.save();
+
+        return res.status(200).send({
+            success: true,
+            message: 'Student added successfully',
+            data: student,
+        });
     } catch (error) {
-        console.error("ERROR IN ADD STUDENT:", error);
-        res.status(500).send({ success: false, message: "Something went wrong!" })
+        console.error('ERROR IN ADD STUDENT:', error);
+
+        // Avoid leaving a student record behind if creating its user fails.
+        if (savedStudent && savedStudent._id) {
+            try {
+                await Student.deleteOne({ _id: savedStudent._id });
+            } catch (cleanupError) {
+                console.error('Student cleanup error:', cleanupError);
+            }
+        }
+
+        return res.status(500).send({
+            success: false,
+            message: error.message || 'Something went wrong while adding the student',
+        });
     }
 }
 
+// Get all students with search
 async function getStudents(req, res) {
     try {
-
         const searchTerm = req.query.courseFullName || '';
+        const safeSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(safeSearchTerm, 'i');
 
-        let student = await Student.find({
+        const students = await Student.find({
             $or: [
-                { firstName: { $regex: new RegExp(searchTerm, "i") } },
-                { lastName: { $regex: new RegExp(searchTerm, "i") } },
-                { enrollmentNumber: { $regex: new RegExp(searchTerm, "i") } },
-                { fileNumber: { $regex: new RegExp(searchTerm, "i") } },
-                { rollNumber: { $regex: new RegExp(searchTerm, "i") } }
-            ]
-        })
+                { firstName: regex },
+                { lastName: regex },
+                { enrollmentNumber: regex },
+                { fileNumber: regex },
+                { rollNumber: regex },
+            ],
+        });
 
-        res.status(200).send({ success: true, data: student })
-
+        return res.status(200).send({
+            success: true,
+            data: students,
+        });
     } catch (error) {
-        console.log(error)
-        res.status(500).send({ success: false, message: 'Something went wrong..!' });
+        console.error('Get students error:', error);
+        return res.status(500).send({
+            success: false,
+            message: 'Failed to fetch students',
+        });
     }
 }
 
+// Delete student
 async function deleteStudent(req, res) {
     try {
-        let studentId = req.params.id;
-        const result = await Student.deleteOne({ _id: studentId })
+        const result = await Student.deleteOne({ _id: req.params.id });
 
-        if (result) {
-            res.status(200).send({ success: true, message: 'Student Deleted Successfully...!' })
-        } else {
-            res.status(500).send({ success: false, message: 'Can not Delete Student!' })
+        if (result.deletedCount > 0) {
+            return res.status(200).send({
+                success: true,
+                message: 'Student deleted successfully!',
+            });
         }
+
+        return res.status(404).send({
+            success: false,
+            message: 'Student not found!',
+        });
     } catch (error) {
-        console.log(error)
-        res.status(500).send({ success: false, message: 'Something went wrong..!' });
+        console.error('Delete student error:', error);
+        return res.status(500).send({
+            success: false,
+            message: 'Failed to delete student',
+        });
     }
 }
 
+// Get student by ID
 async function getStudent(req, res) {
     try {
-        let studentId = req.params.id;
-        let student = await Student.findOne({ _id: studentId });
-        res.status(200).send({ success: true, data: student })
+        const student = await Student.findById(req.params.id);
 
+        if (!student) {
+            return res.status(404).send({
+                success: false,
+                message: 'Student not found!',
+            });
+        }
+
+        return res.status(200).send({
+            success: true,
+            data: student,
+        });
     } catch (error) {
-        res.status(500).send({ success: false, message: 'Something went wrong...' });
+        console.error('Get student error:', error);
+        return res.status(500).send({
+            success: false,
+            message: 'Failed to fetch student',
+        });
     }
 }
 
+// Edit student
 async function editStudent(req, res) {
     try {
-        let studentId = req.params.id;
-        let student = await Student.findOne({ _id: studentId })
-        Object.assign(student, req.body)
+        const student = await Student.findById(req.params.id);
+
+        if (!student) {
+            return res.status(404).send({
+                success: false,
+                message: 'Student not found!',
+            });
+        }
+
+        // Update submitted fields without removing the existing image.
+        const updates = { ...req.body };
+        delete updates._id;
+        delete updates.image;
+
+        Object.assign(student, updates);
+
+        // Replace the image only if a new file is uploaded.
+        if (req.file) {
+            const upload = await uploadToCloudinary(req.file);
+            student.image = upload.secure_url;
+        }
+
         await student.save();
-        res.status(200).send({ success: true, message: 'Student Updated Successfully...' })
+
+        // Keep the corresponding user's image in sync, if the account exists.
+        await User.updateOne(
+            { email: student.collegeEmailId },
+            { $set: { userImage: student.image || DEFAULT_USER_IMAGE } }
+        );
+
+        return res.status(200).send({
+            success: true,
+            message: 'Student updated successfully!',
+            data: student,
+        });
     } catch (error) {
-        res.status(500).send({ success: false, message: 'Something went wrong!' })
+        console.error('Edit student error:', error);
+        return res.status(500).send({
+            success: false,
+            message: error.message || 'Failed to update student',
+        });
     }
 }
 
-
-const bulkUploadStudents = async (req, res) => {
+// Bulk upload students from Excel
+async function bulkUploadStudents(req, res) {
     try {
-        if (!req.file) return res.status(400).json({ message: "No file uploaded" });
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No file uploaded',
+            });
+        }
 
-        const { course, branch, section, year, semester, admissionYear } = req.body;
+        const {
+            course,
+            branch,
+            section,
+            year,
+            semester,
+            admissionYear,
+        } = req.body;
 
-        // Read Excel buffer
-        const workbook = xlsx.read(req.file.buffer, { type: "buffer" });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const students = xlsx.utils.sheet_to_json(sheet);
+        // Excel file is read from Multer memory storage.
+        const workbook = xlsx.read(req.file.buffer, {
+            type: 'buffer',
+        });
 
-        const sectionMap = { A: 'Section A', B: 'Section B', C: 'Section C' };
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
 
-        const validStudents = students
-            .filter(s =>
-                s.firstName &&
-                s.lastName &&
-                s.fatherName &&
-                s.motherName &&
-                s.personalEmailId &&
-                s.collegeEmailId
+        if (!firstSheet) {
+            return res.status(400).json({
+                success: false,
+                message: 'The uploaded Excel file contains no worksheet',
+            });
+        }
+
+        const rows = xlsx.utils.sheet_to_json(firstSheet);
+
+        const sectionMap = {
+            A: 'Section A',
+            B: 'Section B',
+            C: 'Section C',
+        };
+
+        const validStudents = rows
+            .filter(student =>
+                student.firstName &&
+                student.lastName &&
+                student.fatherName &&
+                student.motherName &&
+                student.personalEmailId &&
+                student.collegeEmailId
             )
-            .map((s, i) => ({
-                ...s,
+            .map((student, index) => ({
+                ...student,
                 course,
                 branch,
                 section: sectionMap[section] || section,
@@ -192,18 +357,30 @@ const bulkUploadStudents = async (req, res) => {
                 semester,
                 admissionYear,
                 image: '',
-                enrollmentNumber: `ENR${Date.now()}${i}`,
+                enrollmentNumber: `ENR${Date.now()}${index}`,
             }));
+
+        if (validStudents.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'No valid student records found in the Excel file.',
+            });
+        }
 
         await Student.insertMany(validStudents);
 
-        res.status(200).json({ success: true, message: "Students uploaded successfully!" });
+        return res.status(200).json({
+            success: true,
+            message: 'Students uploaded successfully!',
+        });
     } catch (error) {
-        console.error("Bulk upload error:", error);
-        res.status(500).json({ success: false, message: "Error uploading file", error });
+        console.error('Bulk upload error:', error);
+        return res.status(500).json({
+            success: false,
+            message: error.message || 'Error uploading file',
+        });
     }
-};
-
+}
 
 module.exports = {
     getCourseForStudent,
@@ -214,4 +391,4 @@ module.exports = {
     getStudent,
     editStudent,
     bulkUploadStudents,
-}
+};

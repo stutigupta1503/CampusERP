@@ -25,16 +25,31 @@ router.get("/timeslots", async (req, res) => {
   }
 });
 
-// GET SINGLE TIMESLOT BY ID
-// router.get("/timeslot/:id", async (req, res) => {
-//   try {
-//     const timeslot = await Timeslot.findById(req.params.id);
-//     if (!timeslot) return res.status(404).json({ success: false, message: "Timeslot not found" });
-//     res.status(200).json({ success: true, data: timeslot });
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// });
+
+ // GET SINGLE TIMESLOT BY ID
+router.get("/timeslot/:id", async (req, res) => {
+  try {
+    const timeslot = await Timeslot.findById(req.params.id);
+
+    if (!timeslot) {
+      return res.status(404).json({
+        success: false,
+        message: "Timeslot not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: timeslot,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
 
 // UPDATE TIMESLOT
 router.put("/edit/timeslot/:id", async (req, res) => {
