@@ -7,8 +7,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 function BranchEdit() {
     let navigate = useNavigate();
     let params = useParams();
-
-    // FIXED: Renamed singular 'course' to 'courses' to match what your JSX requires
     let [courses, setCourses] = useState([]);
     let [branch, setBranch] = useState({
         course: '',
@@ -24,7 +22,6 @@ function BranchEdit() {
         navigate('/branches');
     };
 
-    // FIXED: Combined duplicate handleChange logic safely into one clean handler
     function handleChange(e) {
         let name = e.target.name;
         let value = e.target.value;
@@ -36,16 +33,15 @@ function BranchEdit() {
         });
     }
 
-    // FIXED: Extracted form submit event control to process inputs cleanly
     const doEditBranch = (e) => {
-        e.preventDefault(); // Prevents native browser white page reloads
+        e.preventDefault(); 
         
         axios({
-            url: 'http://localhost:3000/edit/branch/' + params.id, // Better to pull directly from route params
+            url: 'http://localhost:3000/edit/branch/' + params.id, 
             method: 'put',
             data: {
                 ...branch,
-                branchIntake: Number(branch.branchIntake) // Formats payload values correctly
+                branchIntake: Number(branch.branchIntake) 
             }
         }).then((result) => {
             if (result.data.success) {
@@ -92,7 +88,6 @@ function BranchEdit() {
 
     return (
         <Container className="mt-4">
-            {/* Added standard form element routing interception */}
             <Form onSubmit={doEditBranch}>
                 <h3 className="text-center mb-4 py-2 text-white fw-bold bg-black">EDIT BRANCH</h3>
                 
@@ -171,7 +166,6 @@ function BranchEdit() {
                     <Button onClick={() => navigate('/branches')} variant="secondary" type="button">
                         Cancel
                     </Button>
-                    {/* FIXED: Changed to type="submit" and removed direct execution script wrapper */}
                     <Button variant="primary" type="submit">
                         Update
                     </Button>

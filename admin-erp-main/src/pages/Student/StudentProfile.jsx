@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -71,10 +70,7 @@ function StudentProfile() {
 
   function formatDate(dateValue) {
     if (!dateValue) return 'N/A';
-
-    // Handle date-only values without timezone-related date shifts.
     const dateString = String(dateValue);
-
     const dateOnlyMatch = dateString.match(/^(\d{4})-(\d{2})-(\d{2})/);
 
     if (dateOnlyMatch) {

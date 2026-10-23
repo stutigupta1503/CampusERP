@@ -3,7 +3,6 @@ const Subject =require('../models/Subject')
 const Course =require('../models/Course')
 const Branch =require('../models/Branch')
 
-
 async function getSubjectsForMapping(req, res) {
   try {
     let subjects = await Subject.find(
@@ -183,7 +182,6 @@ async function deleteSubjectMapping(req, res) {
         })
     }
 }
-
 
 module.exports={
     getSubjectsForMapping,

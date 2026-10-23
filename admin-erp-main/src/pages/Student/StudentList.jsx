@@ -5,10 +5,7 @@ import { Modal, Button, Form, InputGroup, Container } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
-
-
 function StudentList() {
-
     let navigate = useNavigate();
     let [students, setStudents] = useState([])
     const [show, setShow] = useState(false)
@@ -18,7 +15,6 @@ function StudentList() {
     let [searchByEnrollment, setSearchByEnrollment] = useState('')
     let [searchByRollno, setSearchByRollno] = useState('')
     let [searchByFileno, setSearchByFileno] = useState('')
-
 
     useEffect(() => {
 
@@ -44,8 +40,6 @@ function StudentList() {
         })
     }, [isDelete, searchByFirstName, searchByLastName, searchByEnrollment, searchByRollno, searchByFileno])
 
-
-
     const handleClose = () => {
         setShow(false)
         setIsDelete(prev => !prev)
@@ -54,7 +48,6 @@ function StudentList() {
     function goToAddStudentPage() {
         navigate('/add/student')
     }
-
 
     function goToDelete(id) {
         axios({
@@ -70,7 +63,6 @@ function StudentList() {
         })
     }
 
-
     function goToEdit(id) {
         navigate('/edit/student/' + id);
     }
@@ -78,8 +70,6 @@ function StudentList() {
     function goToView(id) {
         navigate('/student/profile/' + id)
     }
-
-
 
     return (
         <>
@@ -93,9 +83,6 @@ function StudentList() {
             </InputGroup>
 
             <button className="btn btn-success ms-3 mt-2 float-end" onClick={goToAddStudentPage}>Add Student +</button>
-
-
-
             <table className="table text-center table-hover mt-5">
                 <thead>
                     <tr>
@@ -137,7 +124,6 @@ function StudentList() {
                     }
                 </tbody>
             </table>
-
 
             {/* ---------Modal code ------------- */}
             <Modal show={show} onHide={handleClose}>

@@ -4,14 +4,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 const apiUrl = import.meta.env.VITE_API_URL;
 
-
-
 function AddStudent() {
 
     let navigate = useNavigate()
     const [show, setShow] = useState(false);
     const [showBulkModal, setShowBulkModal] = useState(false);
-
     const handleClose = () => {
     setShow(false);
     navigate('/students');
@@ -28,8 +25,6 @@ function AddStudent() {
     let [showSpinner, setShowSpinner] = useState(false);
     const [sameAsLocal, setSameAsLocal] = useState(false);
 
-
-    // Upload Excel File
     const [bulkFile, setBulkFile] = useState(null);
     const [uploading, setUploading] = useState(false);
 
@@ -120,43 +115,6 @@ function AddStudent() {
     let [permanentState, setPermanentState] = useState('');
     let [permanentPincode, setPermanentPincode] = useState('');
 
-
-//     useEffect(() => {
-//     axios
-//         .get(`${apiUrl}/courses/for/student`)
-//         .then((res) => {
-//             console.log("COURSES STATUS:", res.status);
-//             console.log("COURSES RESPONSE:", res.data);
-
-//             if (res.data.success) {
-//                 setCourses(res.data.data);
-//             }
-//         })
-//         .catch((err) => {
-//             console.log("COURSES ERROR:", err);
-//             console.log("COURSES ERROR RESPONSE:", err.response?.data);
-//             console.log("COURSES ERROR STATUS:", err.response?.status);
-//         });
-// }, []);
-
-// useEffect(() => {
-//     axios
-//         .get(`${apiUrl}/branches/for/student`)
-//         .then((res) => {
-//             console.log("BRANCHES STATUS:", res.status);
-//             console.log("BRANCHES RESPONSE:", res.data);
-
-//             if (res.data.success) {
-//                 setBranches(res.data.data);
-//             }
-//         })
-//         .catch((err) => {
-//             console.log("BRANCHES ERROR:", err);
-//             console.log("BRANCHES ERROR RESPONSE:", err.response?.data);
-//             console.log("BRANCHES ERROR STATUS:", err.response?.status);
-//         });
-// }, []);
-
     useEffect(() => {
         axios
             .get(`${apiUrl}/courses/for/student`)
@@ -189,7 +147,6 @@ function AddStudent() {
 
 
     let doAddStudent = async (e) => {
-
         e.preventDefault();
         setButtonDisabled(true);
         setShowSpinner(true)
@@ -208,11 +165,9 @@ function AddStudent() {
         formData.append('collegeEmailId', collegeEmailId);
         formData.append('mobileNumber', mobileNumber);
         formData.append('emergencyMobNumber', emergencyMobNumber);
-
         formData.append('course', course);
         formData.append('branch', branch);
         formData.append('section', section);
-
         formData.append('admissionYear', admissionYear);
         formData.append('currentSession', currentSession);
         formData.append('year', year);
@@ -228,7 +183,6 @@ function AddStudent() {
         formData.append('localCity', localCity);
         formData.append('localState', localState);
         formData.append('localPincode', localPincode);
-
         formData.append('permanentAddressLine1', permanentAddressLine1);
         formData.append('permanentAddressLine2', permanentAddressLine2);
         formData.append('permanentCity', permanentCity);
@@ -283,7 +237,6 @@ function AddStudent() {
                 setPermanentCity('');
                 setPermanentState('');
                 setPermanentPincode('');
-
                 setSameAsLocal(false);
             }
 
@@ -298,9 +251,6 @@ function AddStudent() {
     setButtonDisabled(false);
     setShowSpinner(false);
         })
-          
-
-
     }
 
     return (
@@ -471,7 +421,6 @@ function AddStudent() {
                     </Col>
                 </Row>
 
-                {/*------------------- This Row Data was also used by bulkFile upload for selection of fields. */}
                 <Row>
                     <Col md={4}>
                         <Form.Group className="mb-3">
@@ -516,7 +465,7 @@ function AddStudent() {
                         </Form.Group>
                     </Col>
                 </Row>
-                {/* ---------------------------------------------------- */}
+              
                 <Row>
                     <Col md={4}>
                         <Form.Group className="mb-3">
@@ -747,8 +696,6 @@ function AddStudent() {
                 <Modal.Footer><Button variant="secondary" onClick={handleClose}>Close</Button></Modal.Footer>
             </Modal>
 
-
-
             {/* Modal for Bulk Upload of Students Details */}
 
             <Modal size='lg' show={showBulkModal} onHide={handleCloseBulkModal}>
@@ -756,7 +703,7 @@ function AddStudent() {
                     <Modal.Title>📂 Bulk Upload Students</Modal.Title>
                 </Modal.Header>
 
-                <Form onSubmit={handleBulkUpload}>   {/* <-- Form starts here */}
+                <Form onSubmit={handleBulkUpload}>  
 
                     <Modal.Body>
                         <Row>

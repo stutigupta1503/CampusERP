@@ -1,15 +1,9 @@
-
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-
 const StudentController = require('../controllers/StudentController');
 
-// Memory storage supports both:
-// 1. Cloudinary image uploads using req.file.buffer
-// 2. Excel uploads using req.file.buffer
 const storage = multer.memoryStorage();
-
 const upload = multer({
     storage,
     limits: {

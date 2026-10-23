@@ -35,7 +35,7 @@ function AddCourse() {
                 courseShortName,
                 affiliatedUniversity,
                 totalIntake: Number(totalIntake)
-            }); // JSON payload
+            }); 
 
             console.log(res.data);
             setShow(true);

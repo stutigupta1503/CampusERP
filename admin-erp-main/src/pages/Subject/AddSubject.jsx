@@ -18,9 +18,6 @@ function AddSubject() {
     let [subjectType, setSubjectType] = useState("regular");
     let [creditScore, setCreditScore] = useState();
 
-
-
-
     let doAddSubject = () => {
         setButtonDisabled(true)
         SetShowForm(false)
@@ -51,14 +48,11 @@ function AddSubject() {
         })
     };
 
-
     const handleClose = () => {
         setShow(false)
         navigate('/subjects')
 
     }
-
-
     return (
         <>
             {showForm && (<Container className="mt-5">

@@ -71,10 +71,6 @@ async function deleteSubject(req, res) {
     }
 }
 
-
-
-
-
 module.exports = {
     addSubject,
     getSubjects,

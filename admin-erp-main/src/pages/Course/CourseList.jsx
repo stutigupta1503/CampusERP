@@ -5,9 +5,7 @@ import { Modal, Button, Form, InputGroup, Container } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
-
 function CourseList() {
-
 
     let navigate = useNavigate();
     let [courses, setCourses] = useState([])
@@ -15,10 +13,7 @@ function CourseList() {
     let [isDelete, setIsDelete] = useState(false)
     let [searchByCourseName, setSearchByCourseName] = useState('')
 
-
-
     useEffect(() => {
-
         axios({
             url: 'http://localhost:3000/courses',
             method: 'get',
@@ -37,12 +32,9 @@ function CourseList() {
         })
     }, [isDelete, searchByCourseName])
 
-
-
     function searchCourse(coursename) {
         setSearchByCourseName(coursename)
         axios({
-            // url: 'http://localhost:3000',
             url: 'http://localhost:3000/course/search/' + coursename,
             method: 'get',
             params: {
@@ -53,14 +45,11 @@ function CourseList() {
 
             if (result.data.success) {
                 setCourses(result.data.data);
-                // setCourses(result.data.data || []); 
             }
-
         }).catch((error) => {
             console.log(error);
         })
     }
-
 
     const handleClose = () => {
         setShow(false)
@@ -84,7 +73,6 @@ function CourseList() {
             console.log(err.message);
         })
     }
-
 
     function goToEdit(id) {
         navigate('/edit/course/' + id);
@@ -147,7 +135,6 @@ function CourseList() {
             </Modal>
         </>
     )
-
 
 }
 

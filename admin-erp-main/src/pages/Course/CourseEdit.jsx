@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom'
 import universityData from '../../assets/universities.json'
-
 import { Container, Form, Button, Row, Col, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-
-
 
 function CourseEdit() {
 
@@ -14,10 +11,7 @@ function CourseEdit() {
     let params = useParams()
     let [course, setCourse] = useState({})
     let [show, setShow] = useState(false)
-    // let [buttonDisabled, setButtonDisabled] = useState(false);
-
-
-
+    
     const handleClose = () => {
         setShow(false);
         navigate('/courses')

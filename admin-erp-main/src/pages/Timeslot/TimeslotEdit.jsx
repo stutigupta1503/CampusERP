@@ -49,15 +49,7 @@ data: {
   subject: timeslot.subject,
 },
 
-      // data: {
-      //   session: {
-      //     startTime: timeslot.startTime,
-      //     endTime: timeslot.endTime,
-      //   },
-      //   lecture: timeslot.lecture,
-      //   facultyName: timeslot.facultyName, 
-      //   subject: timeslot.subject,
-      // },
+    
     })
       .then((result) => {
         
@@ -98,31 +90,6 @@ useEffect(() => {
       );
     });
 }, [params.id]);
-
-  // useEffect(() => {
-  //   axios({
-  //     url: "http://localhost:3000/timeslot/" + params.id,
-  //     method: "get",
-  //   })
-  //     .then((result) => {
-        
-  //       let data = result.data; 
-
-  //       if (data) {
-  //         setTimeslot({
-  //           startTime: data.session?.startTime || "",
-  //           endTime: data.session?.endTime || "",
-  //           lecture: data.lecture || "",
-  //           facultyName: data.facultyName || "", 
-  //           subject: data.subject || "",
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.error(err);
-  //       alert("Error fetching data: " + err.message);
-  //     });
-  // }, [params.id]);
 
   return (
     <Container>

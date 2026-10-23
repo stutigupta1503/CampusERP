@@ -1,6 +1,5 @@
 const Course = require('../models/Course');
 
-
 async function addCourse(req, res) {
     try {
 
@@ -128,5 +127,4 @@ module.exports = {
     getCourse,
     editCourse,
     getCoursesForStudent
-
 }

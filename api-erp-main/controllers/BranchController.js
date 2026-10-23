@@ -1,8 +1,6 @@
 const Branch = require('../models/Branch')
 const Course =require('../models/Course')
 
-
-
 async function getCoursesForBranch(req, res) {
   try {
     let courses = await Course.find(

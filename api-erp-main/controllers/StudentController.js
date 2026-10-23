@@ -1,4 +1,3 @@
-
 const Branch = require('../models/Branch');
 const Course = require('../models/Course');
 const Student = require('../models/Student');
@@ -18,8 +17,6 @@ cloudinary.config({
 const DEFAULT_USER_IMAGE =
     'https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png';
 
-// Upload a file from Multer memory storage to Cloudinary.
-// Memory storage provides req.file.buffer, not req.file.path.
 function uploadToCloudinary(file, folder = 'students') {
     return new Promise((resolve, reject) => {
         if (!file || !file.buffer) {
@@ -155,7 +152,6 @@ async function addStudent(req, res) {
     } catch (error) {
         console.error('ERROR IN ADD STUDENT:', error);
 
-        // Avoid leaving a student record behind if creating its user fails.
         if (savedStudent && savedStudent._id) {
             try {
                 await Student.deleteOne({ _id: savedStudent._id });
@@ -263,22 +259,18 @@ async function editStudent(req, res) {
             });
         }
 
-        // Update submitted fields without removing the existing image.
         const updates = { ...req.body };
         delete updates._id;
         delete updates.image;
 
         Object.assign(student, updates);
-
-        // Replace the image only if a new file is uploaded.
-        if (req.file) {
+       if (req.file) {
             const upload = await uploadToCloudinary(req.file);
             student.image = upload.secure_url;
         }
 
         await student.save();
 
-        // Keep the corresponding user's image in sync, if the account exists.
         await User.updateOne(
             { email: student.collegeEmailId },
             { $set: { userImage: student.image || DEFAULT_USER_IMAGE } }
@@ -297,7 +289,6 @@ async function editStudent(req, res) {
         });
     }
 }
-
 // Bulk upload students from Excel
 async function bulkUploadStudents(req, res) {
     try {

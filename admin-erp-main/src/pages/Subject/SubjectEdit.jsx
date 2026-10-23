@@ -4,15 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Container, Form, Button, Row, Col, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-
-
 function SubjectEdit() {
 
     let navigate = useNavigate();
     let params = useParams()
     let [subject, setSubject] = useState('');
     let [show, setShow] = useState(false)
-
 
     const handleClose = () => {
         setShow(false);
@@ -28,7 +25,6 @@ function SubjectEdit() {
             }
         })
     }
-
 
     function doEditSubject(id) {
         axios({
@@ -54,9 +50,6 @@ function SubjectEdit() {
 
         })
     }, [params])
-
-
-
 
     return (
         <>
@@ -135,8 +128,6 @@ function SubjectEdit() {
                                     <option value="regular">Regular</option>
                                     <option value="elective">Elective</option>
                                     <option value="combined">Combined</option>
-
-
                                 </Form.Select>
                             </Form.Group>
                         </Col>
@@ -170,12 +161,6 @@ function SubjectEdit() {
                 </Form>
 
             </Container>
-
-            {/* {showSpinner && (<div className="d-flex justify-content-center align-items-center vh-100">
-                <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </Spinner>
-            </div>)} */}
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>

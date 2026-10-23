@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Container, Row, Col, Card, Form, Button, Spinner } from "react-bootstrap";
 import axios from "axios";
-// import { useNavigate } from "react-router-dom";
 
 function AdminLogin() {
-  // let navigate=useNavigate()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showSpinner, setShowSpinner] = useState(false);

@@ -11,7 +11,6 @@ function TimeslotList() {
     const [show, setShow] = useState(false);
     let [isDelete, setIsDelete] = useState(false);
     
-    // Search filter state variables
     let [searchBySubject, setSearchBySubject] = useState('');
     let [searchByFaculty, setSearchByFaculty] = useState('');
     let [searchByLecture, setSearchByLecture] = useState('');
@@ -37,7 +36,7 @@ function TimeslotList() {
 
     const handleClose = () => {
         setShow(false);
-        setIsDelete(prev => !prev); // Triggers useEffect to re-fetch remaining records
+        setIsDelete(prev => !prev); 
     };
 
     function goToAddTimeslotPage() {
@@ -103,7 +102,7 @@ function TimeslotList() {
                                 <td>{slot.facultyName}</td>
                                 <td>{slot.subject}</td>
                                 <td>
-                                    {/* Action items: Eye icon completely removed */}
+                                    
                                     <i className="bi bi-pencil text-warning me-3" style={{ cursor: 'pointer' }} onClick={() => goToEdit(slot._id)}></i>
                                     <i className="bi bi-trash text-danger" style={{ cursor: 'pointer' }} onClick={() => goToDelete(slot._id)}></i>
                                 </td>
@@ -113,7 +112,6 @@ function TimeslotList() {
                 </tbody>
             </table>
 
-            {/* --------- Action Result Modal Code ------------- */}
             <Modal show={show} onHide={handleClose} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Success</Modal.Title>

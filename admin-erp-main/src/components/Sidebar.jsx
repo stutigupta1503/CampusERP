@@ -111,20 +111,14 @@ let [isloggedin,setIsloggedin]=useState(false)
               className="w-100 d-flex align-items-center justify-content-between"
             >
               <div className="d-none d-md-inline d-flex align-items-center">
-                {/* <Image
-                  src={logo}
-                  roundedCircle
-                  width="40"
-                  height="40"
-                  className="me-2"
-                /> */}
+                
                 <div>
                   <h6 className="mb-0">{username} <small className="text-muted">Admin</small>   </h6>
                   
                   <Button className="mt-1" variant="danger" size='sm' onClick={doLogout}>Logout</Button>
                 </div>
               </div>
-              {/* <i className="bi bi-chevron-up"></i> */}
+             
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="w-100">

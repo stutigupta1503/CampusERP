@@ -114,7 +114,7 @@ function SubjectList() {
                                         style={{ cursor: 'pointer' }}
                                         onClick={() => goToEdit(subject._id || subject.id)} 
                                     ></i>
-                                    {/* FIXED: The element now successfully forwards subject.subjectCode */}
+                                    
                                     <i 
                                         className="bi bi-trash text-danger" 
                                         style={{ cursor: 'pointer' }}

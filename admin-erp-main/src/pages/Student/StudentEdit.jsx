@@ -5,9 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Container, Form, Button, Row, Col, Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-
 function StudentEdit() {
-
 
   let [student, setStudent] = useState({});
   let navigate = useNavigate();
@@ -16,8 +14,6 @@ function StudentEdit() {
   const [sameAsLocal, setSameAsLocal] = useState(false);
   let [buttonDisabled, setButtonDisabled] = useState(false);
   let [showSpinner, setShowSpinner] = useState(false);
-
-
 
   const handleClose = () => {
     setShow(false);
@@ -59,8 +55,6 @@ function StudentEdit() {
     })
   }, [params])
 
-
-
   function handleSameAsLocal(e) {
     const checked = e.target.checked;
     setSameAsLocal(checked);
@@ -86,16 +80,11 @@ function StudentEdit() {
     }
   }
 
-
-
-
-
   return (
     <>
       <Container>
         <h4 className="text-center mb-4 py-2 text-primary fw-bold">ADD NEW STUDENT</h4>
         <Form onSubmit={doEditStudent}>
-
           <Row>
             <Col md={4}>
               <Form.Group className="mb-3">
@@ -489,8 +478,6 @@ function StudentEdit() {
           </div>
         </Form>
 
-
-        {/* ******************************** */}
         <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton><Modal.Title>Success</Modal.Title></Modal.Header>
           <Modal.Body>Student has been Updated successfully 👍</Modal.Body>

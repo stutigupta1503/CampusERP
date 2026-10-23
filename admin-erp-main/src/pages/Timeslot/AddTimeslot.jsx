@@ -33,7 +33,6 @@ function AddTimeslot() {
         if (result.data.success) {
           alert("Timeslot added successfully");
 
-          // FIX 3: Redirect the user back to the list page route
           navigate("/timeslots"); 
           
         } else {
@@ -121,7 +120,6 @@ function AddTimeslot() {
           />
         </div>
 
-        {/* Optional Action Button Layout */}
         <div className="d-flex gap-2">
           <button type="submit" className="btn btn-primary">
             Add Timeslot

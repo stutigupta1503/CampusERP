@@ -1,7 +1,6 @@
 const Admin = require("../models/Admin");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-// const nodemailer = require("nodemailer");
 const jwt = require('jsonwebtoken')
 
 async function doAdminLogin(req, res) {
